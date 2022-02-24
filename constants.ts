@@ -12,7 +12,7 @@ export const ENV: Cluster = (process.env.CLUSTER as Cluster) || 'mainnet-beta';
 export const SOLANA_RPC_ENDPOINT =
   ENV === 'devnet'
     ? 'https://api.devnet.solana.com'
-    : 'https://ssc-dao.genesysgo.net';
+    : 'https://solana-api.projectserum.com';
 
 // Wallets
 export const WALLET_PRIVATE_KEY =
@@ -30,7 +30,7 @@ const SCUM_MINT = 'cqNTpypmbwghrf1G9VGvSENcw7M7wGSQ7JS8UTQWXwb';
 
 export const INPUT_MINT_ADDRESS = USDT_MINT;
 
-export const OUTPUT_MINT_ADDRESS = USDT_MINT;
+export const OUTPUT_MINT_ADDRESS = USDC_MINT;
 
 // Interface
 export interface Token {

@@ -107,14 +107,14 @@ const executeSwap = async ({
     });
 
     // Execute swap
-    console.log('before swap');
+    console.log('before swap', execute);
     const swapResult: any = await execute(); // Force any to ignore TS misidentifying SwapResult type
     console.log('after swap');
 
     if (swapResult.error) {
       console.log(swapResult.error);
     } else {
-      console.log(`https://explorer.solana.com/tx/${swapResult.txid}`);
+      console.log(`https://solscan.io/tx/${swapResult.txid}`);
       console.log(
         `inputAddress=${swapResult.inputAddress.toString()} outputAddress=${swapResult.outputAddress.toString()}`,
       );
@@ -164,6 +164,7 @@ const main = async () => {
     });
 
     const bestRoute = routes?.routesInfos[0];
+    console.log(bestRoute);
     if (bestRoute?.outAmount ?? 0 > inputAmount * 10 ** 6) {
       console.log('running', bestRoute?.outAmount, inputAmount * 10 ** 6);
       await executeSwap({ jupiter, route: routes!.routesInfos[0] });
