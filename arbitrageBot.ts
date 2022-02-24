@@ -107,7 +107,9 @@ const executeSwap = async ({
     });
 
     // Execute swap
+    console.log('before swap');
     const swapResult: any = await execute(); // Force any to ignore TS misidentifying SwapResult type
+    console.log('after swap');
 
     if (swapResult.error) {
       console.log(swapResult.error);
@@ -151,18 +153,25 @@ const main = async () => {
       inputToken,
     });
 
+    const inputAmount = 1;
+
     const routes = await getRoutes({
       jupiter,
       inputToken,
       outputToken,
-      inputAmount: 1, // 1 unit in UI
+      inputAmount, // 1 unit in UI
       slippage: 1, // 1% slippage
     });
 
-    console.log(routes);
+    const bestRoute = routes?.routesInfos[0];
+    if (bestRoute?.outAmount ?? 0 > inputAmount * 10 ** 6) {
+      console.log('running', bestRoute?.outAmount, inputAmount * 10 ** 6);
+      await executeSwap({ jupiter, route: routes!.routesInfos[0] });
+    }
+
+    // console.log(routes);
 
     // Routes are sorted based on outputAmount, so ideally the first route is the best.
-    // await executeSwap({ jupiter, route: routes!.routesInfos[0] });
   } catch (error) {
     console.log({ error });
   }

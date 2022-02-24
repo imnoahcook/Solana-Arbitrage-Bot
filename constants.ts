@@ -22,11 +22,15 @@ export const USER_PRIVATE_KEY = bs58.decode(WALLET_PRIVATE_KEY);
 export const USER_KEYPAIR = Keypair.fromSecretKey(USER_PRIVATE_KEY);
 
 // Token Mints
-export const INPUT_MINT_ADDRESS =
-  'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v'; // USDC
-export const OUTPUT_MINT_ADDRESS =
-  'Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB'; // USDT
-// 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v'; // USDC
+
+const USDC_MINT = 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v';
+const USDT_MINT = 'Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB';
+const SOL_MINT = 'So11111111111111111111111111111111111111112';
+const SCUM_MINT = 'cqNTpypmbwghrf1G9VGvSENcw7M7wGSQ7JS8UTQWXwb';
+
+export const INPUT_MINT_ADDRESS = USDT_MINT;
+
+export const OUTPUT_MINT_ADDRESS = USDT_MINT;
 
 // Interface
 export interface Token {
