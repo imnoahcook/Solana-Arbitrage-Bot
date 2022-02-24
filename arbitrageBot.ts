@@ -128,53 +128,61 @@ const executeSwap = async ({
 };
 
 const main = async () => {
-  try {
-    const connection = new Connection(SOLANA_RPC_ENDPOINT); // Setup Solana RPC connection
-    const tokens: Token[] = await (await fetch(TOKEN_LIST_URL[ENV])).json(); // Fetch token list from Jupiter API
+  const connection = new Connection(SOLANA_RPC_ENDPOINT); // Setup Solana RPC connection
+  const tokens: Token[] = await (await fetch(TOKEN_LIST_URL[ENV])).json(); // Fetch token list from Jupiter API
 
-    //  Load Jupiter
-    const jupiter = await Jupiter.load({
-      connection,
-      cluster: ENV,
-      user: USER_KEYPAIR, // or public key
-    });
+  //  Load Jupiter
+  const jupiter = await Jupiter.load({
+    connection,
+    cluster: ENV,
+    user: USER_KEYPAIR, // or public key
+  });
 
-    //  Get routeMap, which maps each tokenMint and their respective tokenMints that are swappable
-    const routeMap = jupiter.getRouteMap();
+  //  Get routeMap, which maps each tokenMint and their respective tokenMints that are swappable
+  const routeMap = jupiter.getRouteMap();
 
-    // If you know which input/output pair you want
-    const inputToken = tokens.find((t) => t.address === INPUT_MINT_ADDRESS); // USDC Mint Info
-    const outputToken = tokens.find((t) => t.address === OUTPUT_MINT_ADDRESS); // USDT Mint Info
+  for (let i = 0; i < 100; ++i) {
+    try {
+      // If you know which input/output pair you want
+      const inputToken = tokens.find((t) => t.address === INPUT_MINT_ADDRESS); // USDC Mint Info
+      const outputToken = tokens.find((t) => t.address === OUTPUT_MINT_ADDRESS); // USDT Mint Info
 
-    // Alternatively, find all possible outputToken based on your inputToken
-    const possiblePairsTokenInfo = await getPossiblePairsTokenInfo({
-      tokens,
-      routeMap,
-      inputToken,
-    });
+      // Alternatively, find all possible outputToken based on your inputToken
+      // const possiblePairsTokenInfo = await getPossiblePairsTokenInfo({
+      //   tokens,
+      //   routeMap,
+      //   inputToken,
+      // });
 
-    const inputAmount = 1;
+      const inputAmount = 1;
 
-    const routes = await getRoutes({
-      jupiter,
-      inputToken,
-      outputToken,
-      inputAmount, // 1 unit in UI
-      slippage: 1, // 1% slippage
-    });
+      const routes = await getRoutes({
+        jupiter,
+        inputToken,
+        outputToken,
+        inputAmount, // 1 unit in UI
+        slippage: 1, // 1% slippage
+      });
 
-    const bestRoute = routes?.routesInfos[0];
-    console.log(bestRoute);
-    if (bestRoute?.outAmount ?? 0 > inputAmount * 10 ** 6) {
-      console.log('running', bestRoute?.outAmount, inputAmount * 10 ** 6);
-      await executeSwap({ jupiter, route: routes!.routesInfos[0] });
+      const bestRoute = routes?.routesInfos[0];
+      console.log(bestRoute);
+      if ((bestRoute?.outAmount ?? 0) > inputAmount * 10 ** 6) {
+        console.log('running', bestRoute?.outAmount, inputAmount * 10 ** 6);
+        await executeSwap({ jupiter, route: routes!.routesInfos[0] });
+      } else {
+        console.log(
+          'not executing',
+          bestRoute?.outAmount,
+          inputAmount * 10 ** 6,
+        );
+      }
+
+      // console.log(routes);
+
+      // Routes are sorted based on outputAmount, so ideally the first route is the best.
+    } catch (error) {
+      console.log({ error });
     }
-
-    // console.log(routes);
-
-    // Routes are sorted based on outputAmount, so ideally the first route is the best.
-  } catch (error) {
-    console.log({ error });
   }
 };
 
